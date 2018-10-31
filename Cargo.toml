@@ -1,0 +1,7 @@
+[package]
+name = "particle_test"
+version = "0.1.0"
+authors = ["Eric Sundell <e.j.sundell@gmail.com>"]
+
+[dependencies]
+glium = "*"
