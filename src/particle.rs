@@ -5,6 +5,7 @@ pub const LIFETIME: f32 = 10.0;
 #[derive(Clone, Copy)]
 pub struct Vec3(pub [f32; 3]);
 
+#[derive(Clone, Copy)]
 pub struct Particle {
     pub position: Vec3,
     pub velocity: Vec3,

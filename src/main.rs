@@ -1,9 +1,11 @@
+#[macro_use]
 extern crate glium;
 
 mod particle;
+mod renderer;
 mod systems;
 
-use glium::{glutin, Surface};
+use glium::{glutin};
 use std::time::{Duration, Instant};
 use particle::{Simulation, Spawner, Vec3};
 
@@ -11,10 +13,13 @@ fn main() {
     let mut events_loop = glutin::EventsLoop::new();
     let window = glutin::WindowBuilder::new()
         .with_title("Particle Test");
-    let context = glutin::ContextBuilder::new();
+    let context = glutin::ContextBuilder::new()
+        .with_gl(glutin::GlRequest::Specific(glutin::Api::OpenGl, (3, 3)))
+        .with_vsync(true);
     let display = glium::Display::new(window, context, &events_loop).unwrap();
 
     let mut sim = create_simulation();
+    let mut renderer = renderer::Renderer::new(display);
 
     let mut closed = false;
     let mut last_frame = Instant::now();
@@ -38,9 +43,10 @@ fn main() {
         systems::spawn_particles(delta_time, &mut sim.particles, &mut sim.spawners);
         systems::update_particles(delta_time, &mut sim.particles);
 
-        let mut target = display.draw();
-        target.clear_color(0.0, 0.0, 0.0, 0.0);
-        target.finish().unwrap();
+        let live_particles = sim.particles.iter().filter_map(|p| p.as_ref());
+        renderer.fill_vertices(live_particles);
+
+        renderer.render();
     }
 }
 

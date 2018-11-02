@@ -1,0 +1,78 @@
+mod shaders;
+
+use glium::{index, program, Display, Surface, VertexBuffer};
+use glium::uniforms::{UniformsStorage};
+use particle::{Particle};
+
+#[derive(Copy, Clone)]
+struct ParticleVertex {
+    pub position: [f32; 3],
+    pub velocity: [f32; 3],
+    pub life: f32
+}
+
+implement_vertex!(ParticleVertex, position, velocity, life);
+
+pub struct Renderer {
+    display: Display,
+    vertices: Vec<ParticleVertex>,
+    buffer: VertexBuffer<ParticleVertex>,
+    program: program::Program
+}
+
+impl Renderer {
+    pub fn new(display: Display) -> Renderer {
+        let buffer = VertexBuffer::empty_dynamic(&display, 100).unwrap();
+        let program = shaders::create_program(&display);
+        Renderer {
+            display: display,
+            vertices: Vec::new(),
+            buffer: buffer,
+            program: program
+        }
+    }
+
+    pub fn fill_vertices<'a, I>(&mut self, particles: I)
+    where I: Iterator<Item=&'a Particle> {
+        self.vertices.clear();
+        let new_verts = particles
+            .map(|p| ParticleVertex {
+                position: p.position.0,
+                velocity: p.velocity.0,
+                life: p.life
+            });
+        self.vertices.extend(new_verts);
+    }
+
+    pub fn render(&mut self) {
+        let mut target = self.display.draw();
+
+        self.update_buffer();
+
+        let mvp_matrix = identity_matrix();
+        let uniforms = UniformsStorage::new("mvpMatrix", mvp_matrix);
+
+        target.draw(
+            &self.buffer,
+            index::NoIndices(index::PrimitiveType::Points),
+            &self.program,
+            &uniforms,
+            &Default::default()
+        ).unwrap();
+
+        target.clear_color(0.0, 0.0, 0.0, 0.0);
+        target.finish().unwrap();
+    }
+
+    fn update_buffer(&mut self) {
+        self.buffer = VertexBuffer::dynamic(&self.display, &self.vertices).unwrap();
+    }
+}
+
+fn identity_matrix() -> [[f32; 4]; 4] {
+    let mut matrix = [[0.0; 4]; 4];
+    for i in 0..4 {
+        matrix[i][i] = 1.0;
+    }
+    matrix
+}
