@@ -3,7 +3,7 @@ use particle::{Particle, Spawner, Vec3};
 use rand::prelude::*;
 use std::f32::consts::PI;
 
-const SPEED: f32 = 0.01;
+const SPEED: f32 = 0.002;
 
 pub fn spawn_particles(
     delta_time: f32,

@@ -1,6 +1,7 @@
 mod shaders;
 
 use glium::{index, program, Display, Surface, VertexBuffer};
+use glium::draw_parameters::{DrawParameters};
 use glium::uniforms::{UniformsStorage};
 use particle::{Particle};
 
@@ -53,13 +54,17 @@ impl Renderer {
         let indices = index::NoIndices(index::PrimitiveType::Points);
         let mvp_matrix = identity_matrix();
         let uniforms = UniformsStorage::new("mvpMatrix", mvp_matrix);
+        let draw_params = DrawParameters {
+            blend: glium::Blend::alpha_blending(),
+            .. Default::default()
+        };
 
         target.draw(
             &self.buffer,
             &indices,
             &self.program,
             &uniforms,
-            &Default::default()
+            &draw_params
         ).unwrap();
 
         target.finish().unwrap();
