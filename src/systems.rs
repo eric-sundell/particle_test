@@ -18,7 +18,7 @@ pub fn spawn_particles(
 }
 
 fn spawn_particle(position: Vec3) -> Particle {
-    let velocity = Vec3([1.0, 0.0, 0.0]);
+    let velocity = Vec3([0.01, 0.0, 0.0]);
     Particle {
         position: position,
         velocity: velocity,

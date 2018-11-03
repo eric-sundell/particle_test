@@ -24,11 +24,20 @@ fn main() {
     let mut closed = false;
     let mut last_frame = Instant::now();
     while !closed {
+        let mut dump_verts = false;
+        
         // listing the events produced by application and waiting to be received
         events_loop.poll_events(|ev| {
             match ev {
                 glutin::Event::WindowEvent { event, .. } => match event {
                     glutin::WindowEvent::CloseRequested => closed = true,
+                    glutin::WindowEvent::KeyboardInput{input, ..} => match input.virtual_keycode {
+                        Some(key) => match key {
+                            glium::glutin::VirtualKeyCode::D => dump_verts = true,
+                            _ => ()
+                        },
+                        _ => ()
+                    }
                     _ => (),
                 },
                 _ => (),
@@ -42,6 +51,10 @@ fn main() {
 
         systems::spawn_particles(delta_time, &mut sim.particles, &mut sim.spawners);
         systems::update_particles(delta_time, &mut sim.particles);
+
+        if dump_verts {
+            println!("{:#?}", sim.particles);
+        }
 
         let live_particles = sim.particles.iter().filter_map(|p| p.as_ref());
         renderer.fill_vertices(live_particles);

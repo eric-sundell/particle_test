@@ -46,21 +46,22 @@ impl Renderer {
 
     pub fn render(&mut self) {
         let mut target = self.display.draw();
+        target.clear_color(0.0, 0.0, 0.0, 0.0);
 
         self.update_buffer();
 
+        let indices = index::NoIndices(index::PrimitiveType::Points);
         let mvp_matrix = identity_matrix();
         let uniforms = UniformsStorage::new("mvpMatrix", mvp_matrix);
 
         target.draw(
             &self.buffer,
-            index::NoIndices(index::PrimitiveType::Points),
+            &indices,
             &self.program,
             &uniforms,
             &Default::default()
         ).unwrap();
 
-        target.clear_color(0.0, 0.0, 0.0, 0.0);
         target.finish().unwrap();
     }
 

@@ -11,4 +11,5 @@ void main()
 {
     color = velocity;
     gl_Position = mvpMatrix * vec4(position, 1.0);
+    gl_PointSize = 10.0;
 }
