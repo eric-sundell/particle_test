@@ -324,6 +324,7 @@ name = "particle_test"
 version = "0.1.0"
 dependencies = [
  "glium 0.22.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand 0.5.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

@@ -1,5 +1,9 @@
 use particle;
 use particle::{Particle, Spawner, Vec3};
+use rand::prelude::*;
+use std::f32::consts::PI;
+
+const SPEED: f32 = 0.01;
 
 pub fn spawn_particles(
     delta_time: f32,
@@ -18,7 +22,11 @@ pub fn spawn_particles(
 }
 
 fn spawn_particle(position: Vec3) -> Particle {
-    let velocity = Vec3([0.01, 0.0, 0.0]);
+    let mut rng = thread_rng();
+    let angle = rng.gen_range(0.0, 2.0 * PI);
+    let x = angle.cos() * SPEED;
+    let y = angle.sin() * SPEED;
+    let velocity = Vec3([x, y, 0.0]);
     Particle {
         position: position,
         velocity: velocity,

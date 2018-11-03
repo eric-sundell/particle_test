@@ -5,3 +5,4 @@ authors = ["Eric Sundell <e.j.sundell@gmail.com>"]
 
 [dependencies]
 glium = "*"
+rand = "0.5"
