@@ -8,7 +8,7 @@ mod systems;
 
 use glium::{glutin};
 use std::time::{Duration, Instant};
-use particle::{Simulation, Spawner, Vec3};
+use particle::{Attractor, Simulation, Spawner, Vec3};
 
 fn main() {
     let mut events_loop = glutin::EventsLoop::new();
@@ -51,6 +51,11 @@ fn main() {
         last_frame = now;
 
         systems::spawn_particles(delta_time, &mut sim.particles, &mut sim.spawners);
+        systems::apply_attractors(
+            delta_time,
+            sim.particles.iter_mut().filter_map(|p| p.as_mut()),
+            &sim.attractors
+        );
         systems::update_particles(delta_time, &mut sim.particles);
 
         if dump_verts {
@@ -65,12 +70,29 @@ fn main() {
 }
 
 fn create_simulation() -> Simulation {
-    let spawner = Spawner {
-        position: Vec3([0.0; 3]),
-        particles_per_second: 5.0,
-        time_since_spawn: 0.0
-    };
-    Simulation::new(vec![spawner])
+    let spawners = vec![
+        Spawner {
+            position: Vec3([0.5, 0.0, 0.0]),
+            particles_per_second: 5.0,
+            time_since_spawn: 0.0
+        },
+        Spawner {
+            position: Vec3([-0.5, 0.0, 0.0]),
+            particles_per_second: 5.0,
+            time_since_spawn: 0.0
+        }
+    ];
+    let attractors = vec![
+        Attractor {
+            position: Vec3([0.5, 0.5, 0.0]),
+            mass: 1.0
+        },
+        Attractor {
+            position: Vec3([-0.1, -0.5, 0.0]),
+            mass: 1.0
+        }
+    ];
+    Simulation::new(spawners, attractors)
 }
 
 fn to_delta_seconds(delta_time: Duration) -> f32 {

@@ -1,9 +1,10 @@
 use particle;
-use particle::{Particle, Spawner, Vec3};
+use particle::{Attractor, Particle, Spawner, Vec3};
 use rand::prelude::*;
 use std::f32::consts::PI;
 
 const SPEED: f32 = 0.002;
+const GRAVITATION: f32 = 0.0005;
 
 pub fn spawn_particles(
     delta_time: f32,
@@ -46,12 +47,28 @@ fn insert_particle(particles: &mut Vec<Option<Particle>>, particle: Particle) {
     particles.push(Some(particle));
 }
 
-pub fn update_particles(delta_time: f32, particles: &mut [Option<Particle>]) {
-    for p in particles.iter_mut() {
-        if p.is_none() {
-            continue;
+pub fn apply_attractors<'a, I>(delta_time: f32, particles: I, attractors: &[Attractor])
+where I: Iterator<Item=&'a mut Particle> {
+    for p in particles {
+        for a in attractors {
+            let dist = p.position - a.position;
+            let gravity = calc_gravity(a.mass, &dist) * delta_time;
+            p.velocity += gravity;
         }
+    }
+}
 
+fn calc_gravity(mass: f32, distance: &Vec3) -> Vec3 {
+    let radius = distance.length();
+    let dir = distance.normalize();
+    let scale = -(GRAVITATION * mass) / radius;
+    dir * scale
+}
+
+pub fn update_particles(delta_time: f32, particles: &mut [Option<Particle>]) {
+    let iter = particles.iter_mut()
+        .filter(|p| p.is_some());
+    for p in iter {
         let mut is_dead = false;
         {
             let p = p.as_mut().unwrap();
