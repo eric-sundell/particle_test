@@ -70,15 +70,16 @@ fn main() {
 }
 
 fn create_simulation() -> Simulation {
+    const SPAWN_RATE: f32 = 20.0;
     let spawners = vec![
         Spawner {
             position: Vec3([0.5, 0.0, 0.0]),
-            particles_per_second: 5.0,
+            particles_per_second: SPAWN_RATE,
             time_since_spawn: 0.0
         },
         Spawner {
             position: Vec3([-0.5, 0.0, 0.0]),
-            particles_per_second: 5.0,
+            particles_per_second: SPAWN_RATE,
             time_since_spawn: 0.0
         }
     ];
