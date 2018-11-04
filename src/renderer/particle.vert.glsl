@@ -11,7 +11,7 @@ out vec4 color;
 void main()
 {
     float lifeScale = clamp(life / 10.0, 0, 1);
-    color = vec4(velocity, lifeScale);
+    color = vec4(abs(velocity) * 64.0, 1.0);
     gl_Position = mvpMatrix * vec4(position, 1.0);
     gl_PointSize = 5.0 * lifeScale;
 }

@@ -47,7 +47,7 @@ impl Renderer {
 
     pub fn render(&mut self) {
         let mut target = self.display.draw();
-        target.clear_color(0.0, 0.0, 0.0, 0.0);
+        target.clear_color(0.01, 0.01, 0.25, 0.0);
 
         self.update_buffer();
 
