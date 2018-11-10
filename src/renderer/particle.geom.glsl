@@ -16,7 +16,7 @@ void main()
     color = vec4(tmpColor, 1.0);
     EmitVertex();
 
-    gl_Position = gl_in[0].gl_Position - (vec4(vVelocity[0], 0.0) * 2.0);
+    gl_Position = gl_in[0].gl_Position - (vec4(vVelocity[0], 0.0) * 4.0);
     color = vec4(tmpColor, 0.0);
     EmitVertex();
 
