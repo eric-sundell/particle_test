@@ -56,6 +56,7 @@ impl Renderer {
         let uniforms = UniformsStorage::new("mvpMatrix", mvp_matrix);
         let draw_params = DrawParameters {
             blend: glium::Blend::alpha_blending(),
+            line_width: Some(2.0),
             .. Default::default()
         };
 
