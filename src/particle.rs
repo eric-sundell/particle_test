@@ -1,10 +1,13 @@
 use std::ops::{AddAssign, Add, MulAssign, Mul, SubAssign, Sub};
 
+/// How long, in seconds, a single particle lives.
 pub const LIFETIME: f32 = 10.0;
 
+/// A 3-dimensional vector.
 #[derive(Debug, Clone, Copy)]
 pub struct Vec3(pub [f32; 3]);
 
+/// An individual particle.
 #[derive(Debug, Clone, Copy)]
 pub struct Particle {
     pub position: Vec3,
@@ -12,6 +15,7 @@ pub struct Particle {
     pub life: f32
 }
 
+/// A source of particles.
 pub struct Spawner {
     pub position: Vec3,
     pub particles_per_second: f32,
@@ -19,11 +23,13 @@ pub struct Spawner {
     pub active: bool
 }
 
+/// A point that draws paticles to itself.
 pub struct Attractor {
     pub position: Vec3,
     pub mass: f32
 }
 
+/// Represents the state of the particle simulation.
 pub struct Simulation {
     pub particles: Vec<Option<Particle>>,
     pub spawners: Vec<Spawner>,
@@ -31,15 +37,18 @@ pub struct Simulation {
 }
 
 impl Vec3 {
+    /// Computes the squared length of the vector.
     pub fn length_squared(&self) -> f32 {
         let v = self.0;
         v[0] * v[0] + v[1] * v[1] + v[2] * v[2]
     }
 
+    /// Computes the length of the vector.
     pub fn length(&self) -> f32 {
         self.length_squared().sqrt()
     }
 
+    /// Creates a unit length vector from this one.
     pub fn normalize(&self) -> Vec3 {
         let len = self.length();
         let v = &self.0;
@@ -108,6 +117,7 @@ impl Sub for Vec3 {
 }
 
 impl Simulation {
+    /// Creates a new simulation.
     pub fn new(spawners: Vec<Spawner>, attractors: Vec<Attractor>) -> Simulation {
         let mut capacity = 0;
         {

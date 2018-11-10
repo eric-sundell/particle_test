@@ -80,6 +80,7 @@ fn main() {
     }
 }
 
+/// Initializes the simulation.
 fn create_simulation() -> Simulation {
     const SPAWN_RATE: f32 = 20.0;
     let spawners = vec![
@@ -115,12 +116,14 @@ fn create_simulation() -> Simulation {
     Simulation::new(spawners, attractors)
 }
 
+/// Converts a `Duration` into fractional seconds.
 fn to_delta_seconds(delta_time: Duration) -> f32 {
     let secs = delta_time.as_secs() as f64;
     let nanos = delta_time.subsec_nanos() as f64;
     (secs + (nanos / 1000000000.0)) as f32
 }
 
+/// Transforms the mouse's `LogicalPosition` into NDC coordinates.
 fn convert_mouse_coords(mouse: glutin::dpi::LogicalPosition, window: &glutin::Window) -> (f32, f32) {
     let window_size = window.get_inner_size().unwrap();
     let x = (mouse.x / window_size.width) * 2.0 - 1.0;
