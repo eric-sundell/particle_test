@@ -55,7 +55,7 @@ fn insert_particle(particles: &mut Vec<Option<Particle>>, particle: Particle) {
 pub fn apply_attractors<'a, I>(delta_time: f32, particles: I, attractors: &[Attractor])
 where I: Iterator<Item=&'a mut Particle> {
     for p in particles {
-        for a in attractors {
+        for a in attractors.iter().filter(|a| a.active) {
             let dist = p.position - a.position;
             let gravity = calc_gravity(a.mass, &dist) * delta_time;
             p.velocity += gravity;

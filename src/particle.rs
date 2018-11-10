@@ -23,10 +23,11 @@ pub struct Spawner {
     pub active: bool
 }
 
-/// A point that draws paticles to itself.
+/// A point that draws particles to itself.
 pub struct Attractor {
     pub position: Vec3,
-    pub mass: f32
+    pub mass: f32,
+    pub active: bool
 }
 
 /// Represents the state of the particle simulation.

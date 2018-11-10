@@ -42,12 +42,17 @@ fn main() {
                         let coords = convert_mouse_coords(position, &renderer.display().gl_window());
                         let coords = Vec3([coords.0, coords.1, 0.0]);
                         sim.spawners[0].position = coords;
+                        sim.attractors[0].position = coords;
                     },
                     glutin::WindowEvent::MouseInput{button, state, ..} => match button {
                         glutin::MouseButton::Left => match state {
                             glutin::ElementState::Pressed => sim.spawners[0].active = true,
                             glutin::ElementState::Released => sim.spawners[0].active = false
                         },
+                        glutin::MouseButton::Right => match state {
+                            glutin::ElementState::Pressed => sim.attractors[0].active = true,
+                            glutin::ElementState::Released => sim.attractors[0].active = false
+                        }
                         _ => (),
                     },
                     _ => (),
@@ -105,12 +110,19 @@ fn create_simulation() -> Simulation {
     ];
     let attractors = vec![
         Attractor {
+            position: Vec3([0.0, 0.0, 0.0]),
+            mass: 2.0,
+            active: false
+        },
+        Attractor {
             position: Vec3([0.5, 0.5, 0.0]),
-            mass: 1.0
+            mass: 1.0,
+            active: true
         },
         Attractor {
             position: Vec3([-0.1, -0.5, 0.0]),
-            mass: 1.0
+            mass: 1.0,
+            active: true
         }
     ];
     Simulation::new(spawners, attractors)
