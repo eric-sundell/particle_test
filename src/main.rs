@@ -18,6 +18,7 @@ fn main() {
         .with_gl(glutin::GlRequest::Specific(glutin::Api::OpenGl, (3, 3)))
         .with_vsync(true);
     let display = glium::Display::new(window, context, &events_loop).unwrap();
+    display.gl_window().set_cursor(glutin::MouseCursor::Crosshair);
 
     let mut sim = create_simulation();
     let mut renderer = renderer::Renderer::new(display);

@@ -4,5 +4,5 @@ version = "0.1.0"
 authors = ["Eric Sundell <e.j.sundell@gmail.com>"]
 
 [dependencies]
-glium = "*"
+glium = "0.22"
 rand = "0.5"
