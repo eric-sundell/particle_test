@@ -27,7 +27,6 @@ fn main() {
     while !closed {
         let mut dump_verts = false;
         
-        // listing the events produced by application and waiting to be received
         events_loop.poll_events(|ev| {
             match ev {
                 glutin::Event::WindowEvent { event, .. } => match event {
@@ -38,7 +37,19 @@ fn main() {
                             _ => ()
                         },
                         _ => ()
-                    }
+                    },
+                    glutin::WindowEvent::CursorMoved{position, ..} => {
+                        let coords = convert_mouse_coords(position, &renderer.display().gl_window());
+                        let coords = Vec3([coords.0, coords.1, 0.0]);
+                        sim.spawners[0].position = coords;
+                    },
+                    glutin::WindowEvent::MouseInput{button, state, ..} => match button {
+                        glutin::MouseButton::Left => match state {
+                            glutin::ElementState::Pressed => sim.spawners[0].active = true,
+                            glutin::ElementState::Released => sim.spawners[0].active = false
+                        },
+                        _ => (),
+                    },
                     _ => (),
                 },
                 _ => (),
@@ -73,14 +84,22 @@ fn create_simulation() -> Simulation {
     const SPAWN_RATE: f32 = 20.0;
     let spawners = vec![
         Spawner {
+            position: Vec3([0.0, 0.0, 0.0]),
+            particles_per_second: SPAWN_RATE * 2.0,
+            time_since_spawn: 0.0,
+            active: false
+        },
+        Spawner {
             position: Vec3([0.5, 0.0, 0.0]),
             particles_per_second: SPAWN_RATE,
-            time_since_spawn: 0.0
+            time_since_spawn: 0.0,
+            active: true
         },
         Spawner {
             position: Vec3([-0.5, 0.0, 0.0]),
             particles_per_second: SPAWN_RATE,
-            time_since_spawn: 0.0
+            time_since_spawn: 0.0,
+            active: true
         }
     ];
     let attractors = vec![
@@ -100,4 +119,11 @@ fn to_delta_seconds(delta_time: Duration) -> f32 {
     let secs = delta_time.as_secs() as f64;
     let nanos = delta_time.subsec_nanos() as f64;
     (secs + (nanos / 1000000000.0)) as f32
+}
+
+fn convert_mouse_coords(mouse: glutin::dpi::LogicalPosition, window: &glutin::Window) -> (f32, f32) {
+    let window_size = window.get_inner_size().unwrap();
+    let x = (mouse.x / window_size.width) * 2.0 - 1.0;
+    let y = -((mouse.y / window_size.height) * 2.0 - 1.0);
+    (x as f32, y as f32)
 }

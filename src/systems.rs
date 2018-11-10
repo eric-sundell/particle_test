@@ -11,7 +11,7 @@ pub fn spawn_particles(
     particles: &mut Vec<Option<Particle>>,
     spawners: &mut [Spawner]
 ) {
-    for spawner in spawners.iter_mut() {
+    for spawner in spawners.iter_mut().filter(|s| s.active) {
         let spawn_delay = 1.0 / spawner.particles_per_second;
         spawner.time_since_spawn += delta_time;
         while spawner.time_since_spawn >= spawn_delay {

@@ -15,7 +15,8 @@ pub struct Particle {
 pub struct Spawner {
     pub position: Vec3,
     pub particles_per_second: f32,
-    pub time_since_spawn: f32
+    pub time_since_spawn: f32,
+    pub active: bool
 }
 
 pub struct Attractor {

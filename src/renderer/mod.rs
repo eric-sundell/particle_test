@@ -33,6 +33,10 @@ impl Renderer {
         }
     }
 
+    pub fn display(&self) -> &Display {
+        &self.display
+    }
+
     pub fn fill_vertices<'a, I>(&mut self, particles: I)
     where I: Iterator<Item=&'a Particle> {
         self.vertices.clear();
