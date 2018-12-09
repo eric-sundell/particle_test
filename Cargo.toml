@@ -2,6 +2,7 @@
 name = "particle_test"
 version = "0.1.0"
 authors = ["Eric Sundell <e.j.sundell@gmail.com>"]
+edition = "2018"
 
 [dependencies]
 glium = "0.22"

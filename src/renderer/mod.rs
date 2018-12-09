@@ -1,9 +1,9 @@
 mod shaders;
 
-use glium::{index, program, Display, Surface, VertexBuffer};
+use glium::{index, program, Display, Surface, VertexBuffer, implement_vertex};
 use glium::draw_parameters::{DrawParameters};
 use glium::uniforms::{UniformsStorage};
-use particle::{Particle};
+use crate::particle::{Particle};
 
 /// Represents vertex data for a particle.
 #[derive(Copy, Clone)]

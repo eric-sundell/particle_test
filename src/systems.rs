@@ -1,5 +1,5 @@
-use particle;
-use particle::{Attractor, Particle, Spawner, Vec3};
+use crate::particle;
+use crate::particle::{Attractor, Particle, Spawner, Vec3};
 use rand::prelude::*;
 use std::f32::consts::PI;
 

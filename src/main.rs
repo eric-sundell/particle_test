@@ -1,14 +1,10 @@
-#[macro_use]
-extern crate glium;
-extern crate rand;
-
 mod particle;
 mod renderer;
 mod systems;
 
 use glium::{glutin};
 use std::time::{Duration, Instant};
-use particle::{Attractor, Simulation, Spawner, Vec3};
+use crate::particle::{Attractor, Simulation, Spawner, Vec3};
 
 fn main() {
     let mut events_loop = glutin::EventsLoop::new();
