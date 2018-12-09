@@ -5,6 +5,9 @@ use glium::draw_parameters::{DrawParameters};
 use glium::uniforms::{UniformsStorage};
 use crate::particle::{Particle};
 
+/// The maximum number of rendered particles.
+const MAX_PARTICLES: usize = 50000;
+
 /// Represents vertex data for a particle.
 #[derive(Copy, Clone)]
 struct ParticleVertex {
@@ -18,7 +21,7 @@ implement_vertex!(ParticleVertex, position, velocity, life);
 /// Contains the state required to render the scene.
 pub struct Renderer {
     display: Display,
-    vertices: Vec<ParticleVertex>,
+    vertex_count: usize,
     buffer: VertexBuffer<ParticleVertex>,
     program: program::Program
 }
@@ -26,11 +29,11 @@ pub struct Renderer {
 impl Renderer {
     /// Initializes a new `Renderer`.
     pub fn new(display: Display) -> Renderer {
-        let buffer = VertexBuffer::empty_dynamic(&display, 100).unwrap();
+        let buffer = VertexBuffer::empty_dynamic(&display, MAX_PARTICLES).unwrap();
         let program = shaders::create_program(&display);
         Renderer {
             display: display,
-            vertices: Vec::new(),
+            vertex_count: 0,
             buffer: buffer,
             program: program
         }
@@ -44,14 +47,21 @@ impl Renderer {
     /// Updates the particle vertex data.
     pub fn fill_vertices<'a, I>(&mut self, particles: I)
     where I: Iterator<Item=&'a Particle> {
-        self.vertices.clear();
-        let new_verts = particles
+        self.buffer.invalidate();
+        let mut mapping = self.buffer.map_write();
+        let vertices = particles
+            .take(MAX_PARTICLES)
             .map(|p| ParticleVertex {
                 position: p.position.0,
                 velocity: p.velocity.0,
                 life: p.life
             });
-        self.vertices.extend(new_verts);
+        let mut index = 0;
+        for v in vertices {
+            mapping.set(index, v);
+            index += 1;
+        }
+        self.vertex_count = index;
     }
 
     /// Draws the scene.
@@ -59,8 +69,7 @@ impl Renderer {
         let mut target = self.display.draw();
         target.clear_color(0.01, 0.01, 0.25, 0.0);
 
-        self.update_buffer();
-
+        let buffer_slice = self.buffer.slice(0..self.vertex_count);
         let indices = index::NoIndices(index::PrimitiveType::Points);
         let mvp_matrix = identity_matrix();
         let uniforms = UniformsStorage::new("mvpMatrix", mvp_matrix);
@@ -70,20 +79,18 @@ impl Renderer {
             .. Default::default()
         };
 
-        target.draw(
-            &self.buffer,
-            &indices,
-            &self.program,
-            &uniforms,
-            &draw_params
-        ).unwrap();
+        if buffer_slice.is_some() {
+            let buffer_slice = buffer_slice.unwrap();
+            target.draw(
+                buffer_slice,
+                &indices,
+                &self.program,
+                &uniforms,
+                &draw_params
+            ).unwrap();
+        }
 
         target.finish().unwrap();
-    }
-
-    /// Updates the vertex buffer.
-    fn update_buffer(&mut self) {
-        self.buffer = VertexBuffer::dynamic(&self.display, &self.vertices).unwrap();
     }
 }
 
